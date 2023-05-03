@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Webinex.Asky;
 
 namespace Webinex.Simply;
 
@@ -29,11 +31,16 @@ internal class SimplyConfiguration<TEntity, TKey> : ISimplyConfiguration
     public Type EntityType { get; } = typeof(TEntity);
     public IServiceCollection Services { get; }
     public IDictionary<string, object> Values { get; } = new Dictionary<string, object>();
+
+    internal void Complete()
+    {
+        Services.TryAddSingleton<IAskyFieldMap<TEntity>, EmptyAskyFieldMap<TEntity>>();
+    }
 }
 
 public static class SimplyConfigurationExtensions
 {
-    public static ISimplyConfiguration AddDbContext<TDbContext>(this ISimplyConfiguration configuration)
+    public static ISimplyConfiguration UseDbContext<TDbContext>(this ISimplyConfiguration configuration)
         where TDbContext : DbContext
     {
         return AddDbContext(configuration, typeof(TDbContext));

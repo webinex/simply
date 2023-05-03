@@ -5,25 +5,18 @@ using System.Text.Json.Nodes;
 
 namespace Webinex.Simply.AspNetCore;
 
-internal class MethodBinder
+// TODO: s.skalaban, add nullability checks, well-formed exception on incomplete binding
+public class MethodBinder
 {
     private readonly IDictionary<ParameterInfo, object?> _boundParameters = new Dictionary<ParameterInfo, object?>();
-
     public MethodInfo MethodInfo { get; }
     public ParameterInfo[] Parameters { get; }
     public IImmutableDictionary<ParameterInfo, object?> BoundParameters => _boundParameters.ToImmutableDictionary();
 
-    public MethodBinder(MethodInfo methodInfo)
+    internal MethodBinder(MethodInfo methodInfo)
     {
         MethodInfo = methodInfo;
         Parameters = methodInfo.GetParameters();
-    }
-
-    public MethodBinder BindJsonStream(Stream jsonStream, JsonSerializerOptions? options = null)
-    {
-        using var reader = new StreamReader(jsonStream);
-        var json = reader.ReadToEnd();
-        return BindJson(json);
     }
 
     public MethodBinder BindJson(string json, JsonSerializerOptions? options = null)
@@ -42,6 +35,7 @@ internal class MethodBinder
         return this;
     }
 
+    // TODO: add well-formed exception about deserialization problem
     private void BindJsonProperty(string name, JsonNode? jsonValue, JsonSerializerOptions? options)
     {
         var param = Parameters.FirstOrDefault(x => x.Name!.Equals(name, StringComparison.InvariantCultureIgnoreCase));
@@ -71,20 +65,23 @@ internal class MethodBinder
         return this;
     }
 
-    public async Task<TResult> InvokeAsync<TResult>(object? instance = null)
+    internal async Task<TResult> InvokeAsync<TResult>(object? instance = null)
     {
-        return await (Task<TResult>)MethodInfo.Invoke(instance, Parameters.Select(x => _boundParameters[x]).ToArray())!;
+        return await (Task<TResult>)Invoke(instance)!;
     }
 
-    public static MethodBinder Of<T>(string name, BindingFlags bindingFlags)
+    internal async Task InvokeAsync(object? instance)
     {
-        return Of(typeof(T), name, bindingFlags);
+        await (Task)Invoke(instance)!;
     }
 
-    public static MethodBinder Of(Type type, string name, BindingFlags bindingFlags)
+    private object? Invoke(object? instance)
     {
-        var methodInfo = type.GetMethod(name, bindingFlags);
-        methodInfo = methodInfo ?? throw new InvalidOperationException();
-        return new MethodBinder(methodInfo);
+        return MethodInfo.Invoke(instance, Parameters.Select(x => _boundParameters[x]).ToArray())!;
+    }
+
+    internal static MethodBinder Of(MethodInfo method)
+    {
+        return new MethodBinder(method);
     }
 }

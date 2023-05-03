@@ -31,9 +31,9 @@ internal class Simply<TEntity> : ISimply<TEntity>
         return _inner.DeleteRangeAsync(entities);
     }
 
-    public Task<TEntity[]> GetAllAsync(FilterRule? filter = null, PagingRule? paging = null, SortRule? sorting = null)
+    public Task<TEntity[]> GetAllAsync(FilterRule? filter = null, SortRule? sorting = null, PagingRule? paging = null)
     {
-        return _inner.GetAllAsync(filter, paging, sorting);
+        return _inner.GetAllAsync(filter, sorting, paging);
     }
 
     public Task<int> CountAsync(FilterRule? filter = null)

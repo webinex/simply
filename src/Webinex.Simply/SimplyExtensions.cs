@@ -30,6 +30,12 @@ public static class SimplyExtensions
         return result.Single();
     }
 
+    public static async Task DeleteAsync<TEntity, TKey>(this ISimply<TEntity, TKey> simply, TEntity entity)
+    {
+        simply = simply ?? throw new ArgumentNullException(nameof(simply));
+        await simply.DeleteRangeAsync(new[] { entity });
+    }
+
     public static async Task<TEntity> ByIdAsync<TEntity>(this ISimply<TEntity, Guid> simply, Guid id)
     {
         simply = simply ?? throw new ArgumentNullException(nameof(simply));

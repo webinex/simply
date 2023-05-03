@@ -19,7 +19,6 @@ public class ExampleDbContext : DbContext
             user.HasKey(x => x.Id);
         });
         
-        
         model.Entity<Company>(company =>
         {
             company.ToTable("Companies");

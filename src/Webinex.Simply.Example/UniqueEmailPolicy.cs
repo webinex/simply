@@ -18,7 +18,6 @@ public class UniqueEmailPolicy : IUniqueEmailPolicy
 
     public Task<bool> ExistsAsync(string email)
     {
-        email = email.ToUpperInvariant();
         return _dbContext.Users.AnyAsync(x => x.Email == email);
     }
 }

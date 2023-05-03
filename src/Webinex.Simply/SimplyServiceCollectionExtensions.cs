@@ -13,6 +13,8 @@ public static class SimplyServiceCollectionExtensions
     {
         var configuration = new SimplyConfiguration<TEntity, TKey>(services);
         configure(configuration);
+        
+        configuration.Complete();
 
         return services;
     }

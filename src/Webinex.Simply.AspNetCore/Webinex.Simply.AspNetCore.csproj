@@ -7,11 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+
+<!--  <ItemGroup>-->
+<!--    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />-->
+<!--  </ItemGroup>-->
 
   <ItemGroup>
     <ProjectReference Include="..\Webinex.Simply\Webinex.Simply.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Webinex.Simply.AspNetCore.csproj.DotSettings" />
   </ItemGroup>
 
 </Project>
